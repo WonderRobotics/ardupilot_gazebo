@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="ramon">
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
+    </plugin>
+
+    <gravity>0 0 -9.8066</gravity>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>30.5844657</latitude_deg>
+      <longitude_deg>34.7449950</longitude_deg>
+      <elevation>902</elevation>
+    </spherical_coordinates>
+
+    <physics name="1ms" type="ignored">
+      <dart>
+        <!-- Heightmaps behave better with the bullet collision detector -->
+        <collision_detector>bullet</collision_detector>
+      </dart>
+    </physics>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="terrain">
+      <static>true</static>
+      <pose>-4.38 -167.76 -244.29 0 0 0</pose>
+      <cast_shadows>false</cast_shadows>
+      <link name="terrain_link">
+        <collision name="terrain_collision">
+          <geometry>
+            <heightmap>
+              <uri>file://heightmaps/ramon_height_map.tif</uri>
+              <size>1185.57 1179.61 252.0</size>
+              <pos>-4.38 -167.76 -244.29</pos>
+              <sampling>8</sampling>
+            </heightmap>
+          </geometry>
+        </collision>
+        <visual name="terrain_visual">
+          <geometry>
+            <heightmap>
+              <use_terrain_paging>false</use_terrain_paging>
+              <texture>
+                <!-- <diffuse>model://textures/sandstone.jpg</diffuse>
+                <normal>model://textures/sandstone.jpg</normal>
+                <size>1</size> -->
+                <diffuse>model://textures/ramon_aerial.png</diffuse>
+                <normal>model://textures/ramon_aerial.png</normal>
+                <size>1185.57 1179.61 252.0</size>
+              </texture>
+              <uri>file://heightmaps/ramon_height_map.tif</uri>
+              <size>1185.57 1179.61 252.0</size>
+              <pos>-4.38 -167.76 -244.29</pos>
+              <sampling>8</sampling>
+            </heightmap>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <include>
+      <uri>model://iris_with_gimbal</uri>
+      <pose degrees="true">0 0 -5 0 0 90</pose>
+    </include>
+
+  </world>
+</sdf>

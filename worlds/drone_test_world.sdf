@@ -1,0 +1,140 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="drone_test_world">
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
+    </plugin>
+
+    <gravity>0 0 -9.8066</gravity>
+
+    <!-- Light -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.2 0.2 -1</direction>
+    </light>
+
+    <!-- Atmosphere -->
+    <atmosphere type="adiabatic"/>
+    <sky>
+      <clouds/>
+    </sky>
+
+    <!-- Heightmap Terrain -->
+    <model name="terrain">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <cast_shadows>false</cast_shadows>
+      <link name="terrain_link">
+        <collision name="terrain_collision">
+          <geometry>
+            <heightmap>
+              <uri>file://heightmaps/drone_test_world_terrain.png</uri>
+              <size>1000 1000 100</size>
+              <pos>0 0 0</pos>
+              <sampling>2</sampling>
+            </heightmap>
+          </geometry>
+        </collision>
+        <visual name="terrain_visual">
+          <geometry>
+            <heightmap>
+              <use_terrain_paging>false</use_terrain_paging>
+              <uri>file://heightmaps/drone_test_world_terrain.png</uri>
+              <size>1000 1000 100</size>
+              <pos>0 0 0</pos>
+              <sampling>2</sampling>
+              <texture>
+                <diffuse>model://runway/materials/textures/Grass004_2K_Color.jpg</diffuse>
+                <normal>model://runway/materials/textures/Grass004_2K_NormalGL.jpg</normal>
+                <size>1</size>
+              </texture>
+            </heightmap>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Drone -->
+    <include>
+      <uri>model://atalef</uri>
+      <pose degrees="true">20 30 3 0 0 90</pose>
+    </include>
+
+    <!-- Other props -->
+    <include>
+      <uri>model://house_1</uri>
+      <pose>10 5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://house_2</uri>
+      <pose>30 5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://house_3</uri>
+      <pose>50 5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak_tree</uri>
+      <pose>20 20 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://dumpster</uri>
+      <pose>30 30 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://lamp_post</uri>
+      <pose>40 40 0 0 0 0</pose>
+    </include>
+
+    <!-- <include>
+      <uri>model://ambulance</uri>
+      <pose>45 40 0 0 0 0</pose>
+      <static>false</static>
+    </include>
+
+    <plugin name="path_mover_plugin" filename="libPathMoverPlugin.so">
+      <model>ambulance</model>
+      <points>(85.00, 40.00), (83.48, 47.65), (79.14, 54.14), (72.65, 58.48), (65.00, 60.00), (57.35, 58.48), (50.86, 54.14), (46.52, 47.65),
+      (45.00, 40.00), (46.52, 32.35), (50.86, 25.86), (57.35, 21.52), (65.00, 20.00), (72.65, 21.52), (79.14, 25.86), (83.48, 32.35)</points>
+      <speed>10</speed>
+      <angleOffset>90</angleOffset>
+    </plugin> -->
+
+    <include>
+      <uri>model://car_beetle</uri>
+      <pose>50 40 0 0 0 0</pose>
+      <static>false</static>
+    </include>
+    <include>
+      <uri>model://rover_ackermann</uri>
+      <pose>55 40 0 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>
