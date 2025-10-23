@@ -76,6 +76,8 @@
       </sensor>
     </link>
 
-    <plugin name="lidar_plugin" filename="libLidarPlugin.so"></plugin>
+    <plugin name="lidar_plugin" filename="libLidarPlugin.so">
+      <port>14551</port>
+    </plugin>
   </model>
 </sdf>

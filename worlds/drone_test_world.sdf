@@ -4,8 +4,7 @@
     <plugin filename="gz-sim-physics-system"
       name="gz::sim::systems::Physics">
     </plugin>
-    <plugin
-      filename="gz-sim-sensors-system"
+    <plugin filename="gz-sim-sensors-system"
       name="gz::sim::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
@@ -20,6 +19,9 @@
     </plugin>
     <plugin filename="gz-sim-navsat-system"
       name="gz::sim::systems::NavSat">
+    </plugin>
+    <plugin filename="gz-sim-wind-effects-system"
+      name="gz::sim::systems::WindEffects">
     </plugin>
 
     <gravity>0 0 -9.8066</gravity>
@@ -44,6 +46,10 @@
     <sky>
       <clouds/>
     </sky>
+
+    <wind>
+      <linear_velocity>20 0 0</linear_velocity>
+    </wind>
 
     <!-- Heightmap Terrain -->
     <model name="terrain">
@@ -84,6 +90,7 @@
     <include>
       <uri>model://atalef</uri>
       <pose degrees="true">20 30 3 0 0 90</pose>
+      <enable_wind>true</enable_wind>
     </include>
 
     <!-- Other props -->

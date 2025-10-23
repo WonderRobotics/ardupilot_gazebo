@@ -32,10 +32,6 @@ public:
     void Configure(const Entity &_entity, const std::shared_ptr<const sdf::Element> &sdf,
                     EntityComponentManager &_ecm, EventManager &_eventMgr) override
     {
-        // Default values:
-        m_ip = "127.0.0.1";
-        m_port = 14550;
-
         std::vector<std::string> models;
         Entity current = _entity;
         while (current != kNullEntity)
@@ -84,6 +80,11 @@ public:
             m_port = sdf->Get<int>("port");
         }
 
+        if (sdf->HasElement("rate"))
+        {
+            m_message_rate = sdf->Get<size_t>("rate");
+        }
+
         if (sdf->HasElement("sensor_topic"))
         {
             m_sensor_topic = sdf->Get<std::string>("sensor_topic");
@@ -106,27 +107,37 @@ private:
             return;
         }
 
-        mavlink_distance_sensor_t dist_sensor_msg;
-        dist_sensor_msg.time_boot_ms = 0;
-        dist_sensor_msg.min_distance = static_cast<uint16_t>(_msg.range_min() * 100);
-        dist_sensor_msg.max_distance = static_cast<uint16_t>(_msg.range_max() * 100);
-        dist_sensor_msg.current_distance = static_cast<uint16_t>(std::clamp(_msg.ranges(0), _msg.range_min(), _msg.range_max()) * 100);
-        dist_sensor_msg.type = MAV_DISTANCE_SENSOR_LASER;
-        dist_sensor_msg.id = 0;
-        dist_sensor_msg.orientation = MAV_SENSOR_ROTATION_PITCH_270;
-        dist_sensor_msg.covariance = 0.0;
+        static std::chrono::steady_clock::time_point old_time = std::chrono::steady_clock::now();
+        const std::chrono::steady_clock::time_point current_time = std::chrono::steady_clock::now();
+        const std::chrono::duration<float, std::milli> dt = current_time - old_time;
 
-        mavlink_message_t msg;
-        mavlink_msg_distance_sensor_encode(1, 1, &msg, &dist_sensor_msg);
-        uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-        int len = mavlink_msg_to_send_buffer(buf, &msg);
-        m_socket.send_to(boost::asio::buffer(buf, len), m_remote_endpoint);
+        if (dt.count() > 1000.0f / m_message_rate)
+        {
+            old_time = current_time;
+            mavlink_distance_sensor_t dist_sensor_msg;
+            dist_sensor_msg.time_boot_ms = 0;
+            dist_sensor_msg.min_distance = static_cast<uint16_t>(_msg.range_min() * 100);
+            dist_sensor_msg.max_distance = static_cast<uint16_t>(_msg.range_max() * 100);
+            dist_sensor_msg.current_distance = static_cast<uint16_t>(std::clamp(_msg.ranges(0), _msg.range_min(), _msg.range_max()) * 100);
+            dist_sensor_msg.type = MAV_DISTANCE_SENSOR_LASER;
+            dist_sensor_msg.id = 0;
+            dist_sensor_msg.orientation = MAV_SENSOR_ROTATION_PITCH_270;
+            dist_sensor_msg.covariance = 0.0;
+
+            mavlink_message_t msg;
+            mavlink_msg_distance_sensor_encode(1, 1, &msg, &dist_sensor_msg);
+            uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+            int len = mavlink_msg_to_send_buffer(buf, &msg);
+            m_socket.send_to(boost::asio::buffer(buf, len), m_remote_endpoint);
+        }
+
     }
 
     transport::Node m_node;
     std::string m_sensor_topic;
-    std::string m_ip;
-    int m_port;
+    std::string m_ip = "127.0.0.1";
+    int m_port = 14550;
+    size_t m_message_rate = 10;
 
     boost::asio::io_service m_io_service;
     boost::asio::ip::udp::socket m_socket{m_io_service};
@@ -134,9 +145,10 @@ private:
 };
 
 GZ_ADD_PLUGIN(DistanceSensorMavlinkPlugin,
-              System,
-              ISystemConfigure,
-              ISystemPreUpdate)
+    System,
+    ISystemConfigure,
+    ISystemPreUpdate
+)
 
 GZ_ADD_PLUGIN_ALIAS(DistanceSensorMavlinkPlugin, "lidar_plugin")
 }
