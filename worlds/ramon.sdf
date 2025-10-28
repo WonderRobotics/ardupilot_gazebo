@@ -90,7 +90,7 @@
     </model>
 
     <include>
-      <uri>model://iris_with_gimbal</uri>
+      <uri>model://atalef</uri>
       <pose degrees="true">0 0 -5 0 0 90</pose>
     </include>
 
