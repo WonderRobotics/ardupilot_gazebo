@@ -1089,7 +1089,7 @@
     <plugin name="ArduPilotPlugin" filename="ArduPilotPlugin">
       <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
-      <fdm_port_in>9002</fdm_port_in>
+      <fdm_port_in>9012</fdm_port_in>
       <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
       <lock_step>1</lock_step>
 
@@ -1099,14 +1099,14 @@
       <!-- Sensors -->
       <imuName>imu_sensor</imuName>
 
-      <!-- 
+      <!--
           SERVO1_FUNCTION   4 (Aileron)
           SERVO1_MAX        2000
           SERVO1_MIN        1000
           SERVO1_REVERSED   0
           SERVO1_TRIM       1500
 
-          pwm:          =>  [1100, 1900] 
+          pwm:          =>  [1100, 1900]
           input:        =>  [0, 1]
           offset: -0.5  =>  [-0.5, 0.5]
           scale:   2.0  =>  [-1.0, 1.0]
@@ -1146,7 +1146,7 @@
         <cmd_min>-2.5</cmd_min>
       </control>
 
-      <!-- 
+      <!--
           SERVO2_FUNCTION   19 (Elevator)
           SERVO2_MAX        2000
           SERVO2_MIN        1000
@@ -1170,7 +1170,7 @@
         <cmd_min>-2.5</cmd_min>
       </control>
 
-      <!-- 
+      <!--
           SERVO3_FUNCTION   70 (Throttle)
           SERVO3_MAX        2000
           SERVO3_MIN        1000
@@ -1201,7 +1201,7 @@
       </control>
 
 
-      <!-- 
+      <!--
           SERVO5_FUNCTION   33 (Motor1 Front Right CW)
           SERVO5_MAX        2000
           SERVO5_MIN        1000
@@ -1225,7 +1225,7 @@
         <cmd_min>-2.5</cmd_min>
       </control>
 
-      <!-- 
+      <!--
           SERVO6_FUNCTION   34 (Motor2 Rear Left CW)
           SERVO6_MAX        2000
           SERVO6_MIN        1000
@@ -1249,7 +1249,7 @@
         <cmd_min>-2.5</cmd_min>
       </control>
 
-      <!-- 
+      <!--
           SERVO7_FUNCTION   35 (Motor3 Front Left CCW)
           SERVO7_MAX        2000
           SERVO7_MIN        1000
@@ -1273,7 +1273,7 @@
         <cmd_min>-2.5</cmd_min>
       </control>
 
-      <!-- 
+      <!--
           SERVO8_FUNCTION   36 (Motor4 Rear Right CCW)
           SERVO8_MAX        2000
           SERVO8_MIN        1000

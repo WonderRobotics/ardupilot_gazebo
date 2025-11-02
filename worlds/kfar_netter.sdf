@@ -1,0 +1,109 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="kfar_netter">
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
+    </plugin>
+
+    <gravity>0 0 -9.8066</gravity>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>32.287132602888846</latitude_deg>
+      <longitude_deg>34.8760986328125</longitude_deg>
+      <elevation>29.600000000000364</elevation>
+    </spherical_coordinates>
+
+
+    <physics name="1ms" type="ignored">
+      <dart>
+        <!-- Heightmaps behave better with the bullet collision detector -->
+        <collision_detector>bullet</collision_detector>
+      </dart>
+    </physics>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="terrain">
+      <static>true</static>
+      <pose>129.36 -128.75 -2.44 0 0 0</pose>
+
+      <link name="ground">
+        <collision name="collision">
+          <geometry>
+            <heightmap>
+              <uri>file://heightmaps/kfar_netter_height_map.tif</uri>
+              <size>776.2 772.45 14.4</size>
+              <pos>129.36 -128.75 -2.44</pos>
+            </heightmap>
+          </geometry>
+        </collision>
+        <visual name="ground_visual">
+          <geometry>
+            <heightmap>
+              <use_terrain_paging>false</use_terrain_paging>
+              <texture>
+                <diffuse>model://textures/kfar_netter_aerial.png</diffuse>
+                <normal>model://textures/kfar_netter_aerial.png</normal>
+                <size>776.2 772.45 14.4</size>
+              </texture>
+              <uri>file://heightmaps/kfar_netter_height_map.tif</uri>
+              <size>776.2 772.45 14.4</size>
+              <pos>129.36 -128.75 -2.44</pos>
+              <sampling>8</sampling>
+            </heightmap>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- props -->
+    <include>
+      <uri>model://car_121</uri>
+      <pose>0 80 0 0 0 0</pose>
+      <static>false</static>
+    </include>
+
+    <!-- quad -->
+    <include>
+      <uri>model://atalef</uri>
+      <pose degrees="true">0 0 0 0 0 90</pose>
+    </include>
+
+    <!-- vtol -->
+    <include>
+      <uri>model://vtol</uri>
+      <pose degrees="true">0 -2 0.2 0 0 90</pose>
+    </include>
+
+  </world>
+</sdf>
