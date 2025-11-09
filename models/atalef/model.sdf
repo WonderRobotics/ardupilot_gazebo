@@ -202,8 +202,7 @@
       <joint_name>iris_with_standoffs::rotor_3_joint</joint_name>
     </plugin>
 
-    <plugin name="ArduPilotPlugin"
-      filename="ArduPilotPlugin">
+    <plugin name="ArduPilotPlugin" filename="ArduPilotPlugin">
       <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
       <fdm_port_in>9002</fdm_port_in>

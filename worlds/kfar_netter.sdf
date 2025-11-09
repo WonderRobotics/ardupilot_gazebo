@@ -96,13 +96,51 @@
     <!-- quad -->
     <include>
       <uri>model://atalef</uri>
+      <name>atalef1</name>
+      <pose degrees="true">-1 0 0 0 0 90</pose>
+      <experimental:params>
+        <plugin element_id="ArduPilotPlugin" action="modify">
+          <fdm_addr>127.0.0.1</fdm_addr>
+          <fdm_port_in>9002</fdm_port_in>
+        </plugin>
+      </experimental:params>
+    </include>
+
+    <include>
+      <uri>model://atalef</uri>
+      <name>atalef2</name>
       <pose degrees="true">0 0 0 0 0 90</pose>
+      <experimental:params>
+        <plugin element_id="ArduPilotPlugin" action="modify">
+          <fdm_addr>127.0.0.1</fdm_addr>
+          <fdm_port_in>9012</fdm_port_in>
+        </plugin>
+      </experimental:params>
+    </include>
+
+    <include>
+      <uri>model://atalef</uri>
+      <name>atalef3</name>
+      <pose degrees="true">1 0 0 0 0 90</pose>
+      <experimental:params>
+        <plugin element_id="ArduPilotPlugin" action="modify">
+          <fdm_addr>127.0.0.1</fdm_addr>
+          <fdm_port_in>9022</fdm_port_in>
+        </plugin>
+      </experimental:params>
     </include>
 
     <!-- vtol -->
     <include>
       <uri>model://vtol</uri>
+      <name>vtol</name>
       <pose degrees="true">0 -2 0.2 0 0 90</pose>
+      <experimental:params>
+        <plugin element_id="vtol::ArduPilotPlugin" action="modify">
+          <fdm_addr>127.0.0.1</fdm_addr>
+          <fdm_port_in>9032</fdm_port_in>
+        </plugin>
+      </experimental:params>
     </include>
 
   </world>
