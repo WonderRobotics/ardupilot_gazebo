@@ -108,7 +108,10 @@ private:
         }
 
         static constexpr uint16_t MIN_DISTANCE_RANGE = 50;
+        static constexpr uint16_t DISTANCE_MAX_JUMP = 500;
+        static constexpr uint16_t MAX_LAST_DISTANCE_USES = 30;
         static uint16_t last_distance = MIN_DISTANCE_RANGE;
+        static uint16_t last_distance_use_counter = 0;
         static std::chrono::steady_clock::time_point old_time = std::chrono::steady_clock::now();
         const std::chrono::steady_clock::time_point current_time = std::chrono::steady_clock::now();
         const std::chrono::duration<float, std::milli> dt = current_time - old_time;
@@ -125,6 +128,23 @@ private:
             dist_sensor_msg.id = 0;
             dist_sensor_msg.orientation = MAV_SENSOR_ROTATION_PITCH_270;
             dist_sensor_msg.covariance = 0.0;
+
+            if (std::abs(dist_sensor_msg.current_distance - last_distance) > DISTANCE_MAX_JUMP)
+            {
+                last_distance_use_counter++;
+                if (last_distance_use_counter > MAX_LAST_DISTANCE_USES)
+                {
+                    last_distance_use_counter = 0;
+                }
+                else
+                {
+                    dist_sensor_msg.current_distance = last_distance;
+                }
+            }
+            else
+            {
+                last_distance_use_counter = 0;
+            }
 
             if (dist_sensor_msg.current_distance < MIN_DISTANCE_RANGE)
             {

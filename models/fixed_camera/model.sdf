@@ -63,10 +63,10 @@
         <update_rate>30</update_rate>
         <visualize>1</visualize>
 
-        <plugin name="CameraZoomPlugin" filename="CameraZoomPlugin">
+        <!-- <plugin name="CameraZoomPlugin" filename="CameraZoomPlugin">
           <max_zoom>125.0</max_zoom>
           <slew_rate>0.42514285714</slew_rate>
-        </plugin>
+        </plugin> -->
 
         <plugin name="GstCameraPlugin" filename="GstCameraPlugin">
           <udp_host>127.0.0.1</udp_host>
