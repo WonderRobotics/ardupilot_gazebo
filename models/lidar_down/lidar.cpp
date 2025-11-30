@@ -107,10 +107,8 @@ private:
             return;
         }
 
-        static constexpr uint16_t DISTANCE_MAX_JUMP = 1000;
-        static constexpr uint16_t MAX_LAST_DISTANCE_USES = 30;
-        static uint16_t last_distance = 0;
-        static uint16_t last_distance_use_counter = 0;
+        static constexpr uint16_t MIN_DISTANCE_RANGE = 50;
+        static uint16_t last_distance = MIN_DISTANCE_RANGE;
         static std::chrono::steady_clock::time_point old_time = std::chrono::steady_clock::now();
         const std::chrono::steady_clock::time_point current_time = std::chrono::steady_clock::now();
         const std::chrono::duration<float, std::milli> dt = current_time - old_time;
@@ -119,7 +117,7 @@ private:
         {
             old_time = current_time;
             mavlink_distance_sensor_t dist_sensor_msg;
-            dist_sensor_msg.time_boot_ms = 0;
+            dist_sensor_msg.time_boot_ms = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - boot_time).count();
             dist_sensor_msg.min_distance = static_cast<uint16_t>(_msg.range_min() * 100);
             dist_sensor_msg.max_distance = static_cast<uint16_t>(_msg.range_max() * 100);
             dist_sensor_msg.current_distance = static_cast<uint16_t>(std::clamp(_msg.ranges(0), _msg.range_min(), _msg.range_max()) * 100);
@@ -128,21 +126,9 @@ private:
             dist_sensor_msg.orientation = MAV_SENSOR_ROTATION_PITCH_270;
             dist_sensor_msg.covariance = 0.0;
 
-            if (std::abs(dist_sensor_msg.current_distance - last_distance) > DISTANCE_MAX_JUMP)
+            if (dist_sensor_msg.current_distance < MIN_DISTANCE_RANGE)
             {
-                last_distance_use_counter++;
-                if (last_distance_use_counter > MAX_LAST_DISTANCE_USES)
-                {
-                    last_distance_use_counter = 0;
-                }
-                else
-                {
-                    dist_sensor_msg.current_distance = last_distance;
-                }
-            }
-            else
-            {
-                last_distance_use_counter = 0;
+                dist_sensor_msg.current_distance = last_distance;
             }
 
             mavlink_message_t msg;
@@ -161,6 +147,7 @@ private:
     std::string m_ip = "127.0.0.1";
     int m_port = 14550;
     size_t m_message_rate = 10;
+    const std::chrono::steady_clock::time_point boot_time = std::chrono::steady_clock::now();
 
     boost::asio::io_service m_io_service;
     boost::asio::ip::udp::socket m_socket{m_io_service};

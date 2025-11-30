@@ -31,7 +31,7 @@
 
     <include>
       <name>lidar</name>
-      <pose degrees="true">-0.08 0 -0.03 0 0 0</pose>
+      <pose degrees="true">-0.06 0 -0.04 0 0 0</pose>
       <uri>model://lidar_down</uri>
     </include>
 
