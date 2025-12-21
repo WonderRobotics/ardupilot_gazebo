@@ -107,15 +107,9 @@ private:
             return;
         }
 
-        static constexpr uint16_t MIN_DISTANCE_RANGE = 50;
-        static constexpr uint16_t DISTANCE_MAX_JUMP = 500;
-        static constexpr uint16_t MAX_LAST_DISTANCE_USES = 30;
-        static uint16_t last_distance = MIN_DISTANCE_RANGE;
-        static uint16_t last_distance_use_counter = 0;
         static std::chrono::steady_clock::time_point old_time = std::chrono::steady_clock::now();
         const std::chrono::steady_clock::time_point current_time = std::chrono::steady_clock::now();
         const std::chrono::duration<float, std::milli> dt = current_time - old_time;
-
         if (dt.count() > 1000.0f / m_message_rate)
         {
             old_time = current_time;
@@ -129,37 +123,12 @@ private:
             dist_sensor_msg.orientation = MAV_SENSOR_ROTATION_PITCH_270;
             dist_sensor_msg.covariance = 0.0;
 
-            if (std::abs(dist_sensor_msg.current_distance - last_distance) > DISTANCE_MAX_JUMP)
-            {
-                last_distance_use_counter++;
-                if (last_distance_use_counter > MAX_LAST_DISTANCE_USES)
-                {
-                    last_distance_use_counter = 0;
-                }
-                else
-                {
-                    dist_sensor_msg.current_distance = last_distance;
-                }
-            }
-            else
-            {
-                last_distance_use_counter = 0;
-            }
-
-            if (dist_sensor_msg.current_distance < MIN_DISTANCE_RANGE)
-            {
-                dist_sensor_msg.current_distance = last_distance;
-            }
-
             mavlink_message_t msg;
             mavlink_msg_distance_sensor_encode(1, 1, &msg, &dist_sensor_msg);
             uint8_t buf[MAVLINK_MAX_PACKET_LEN];
             int len = mavlink_msg_to_send_buffer(buf, &msg);
             m_socket.send_to(boost::asio::buffer(buf, len), m_remote_endpoint);
-
-            last_distance = dist_sensor_msg.current_distance;
         }
-
     }
 
     transport::Node m_node;
