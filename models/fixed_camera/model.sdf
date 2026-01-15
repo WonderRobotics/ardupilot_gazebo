@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.9">
   <model name="fixed_camera">
+    <self_collide>false</self_collide>
     <pose>0 0 0 0 0 0</pose>
     <link name="camera_link">
       <inertial>
@@ -46,7 +47,7 @@
           </cylinder>
         </geometry>
       </collision>
-      <sensor name="camera" type="camera">
+      <sensor name="camera" type="rgbd_camera">
         <pose>0 0 0 0 1.57 0</pose>
         <camera>
           <horizontal_fov>1.57</horizontal_fov>

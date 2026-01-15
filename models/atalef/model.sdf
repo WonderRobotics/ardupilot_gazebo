@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 <sdf version="1.9">
   <model name="atalef">
+    <self_collide>false</self_collide>
     <include>
       <uri>model://iris_with_standoffs</uri>
     </include>
@@ -19,7 +20,7 @@
 
     <include>
       <name>front_camera</name>
-      <pose degrees="true">0.08 0 0 0 -75 0</pose>
+      <pose degrees="true">0.1 0 0 0 -75 0</pose>
       <uri>model://fixed_camera</uri>
     </include>
 
