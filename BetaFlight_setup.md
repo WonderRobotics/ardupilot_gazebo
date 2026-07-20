@@ -72,8 +72,8 @@ On success it prints `[SITL] new fdm 144 t:… ` (state link up) shortly after s
 ```bash
 # Terminal 3 — Virtual RC
 cd ~/gz_ws/src/ardupilot_gazebo
-./tools/virtual_rc.py                 # keyboard
-./tools/virtual_rc.py --joystick      # gamepad (run --list first to map it)
+./tools/custom_virtual_rc.py                 # keyboard
+./tools/custom_virtual_rc.py --joystick      # gamepad (run --list first to map it)
 ```
 Keep this running the whole time — if RC stops streaming, the FC goes to failsafe.
 
