@@ -30,6 +30,10 @@ Controls (keyboard; OS key-repeat holds a stick deflected):
     SPACE arm    g angle    x panic    c centre    q quit
     m  = next override state (wraps)     n = previous state
     1..9 = jump directly to override state N
+    t  = toggle throttle mode live: spring-to-mid <-> latch
+Throttle springs back to mid (1500) by default once armed (the "1500 = hold"
+signal for a companion alt-hold); pass --throttle-latch to start in latch mode,
+or press `t` to switch at runtime.
 
 Gamepad ( --joystick ): sticks fly; buttons arm / angle / panic; the `msp`
 button advances the override state.
@@ -179,6 +183,9 @@ class CustomVirtualRC:
 
         self.armed = False
         self.angle = False
+        # Throttle spring-to-mid engages only after the first throttle input
+        # while armed (so you can still arm at idle with no surprise spin-up).
+        self._thr_touched = False
         self.start = time.monotonic()
         self._status_lines = 0
 
@@ -199,14 +206,22 @@ class CustomVirtualRC:
     def toggle(self, action):
         if action == "arm":
             self.armed = not self.armed
+            self._thr_touched = False
         elif action == "angle":
             self.angle = not self.angle
         elif action == "msp_next":
             self.set_msp_state(self.msp_state + 1)
         elif action == "msp_prev":
             self.set_msp_state(self.msp_state - 1)
+        elif action == "throttle_mode":
+            # Live switch between spring-to-mid (companion alt-hold) and latch
+            # (manual). Keeps the current throttle value; spring re-engages
+            # after the next throttle input while armed.
+            self.args.throttle_center = not self.args.throttle_center
+            self._thr_touched = False
         elif action == "panic":
             self.armed = False
+            self._thr_touched = False
             self.channels[CH_THROTTLE] = LOW
         elif action == "center":
             for idx in (CH_ROLL, CH_PITCH, CH_YAW):
@@ -244,9 +259,17 @@ class CustomVirtualRC:
         step = self.args.throttle_step
         c = self.channels
         if key == "w":
-            c[CH_THROTTLE] = clamp(c[CH_THROTTLE] + step)
+            if self.args.throttle_center and self.armed:
+                self._thr_touched = True
+                c[CH_THROTTLE] = clamp(MID + d)
+            else:
+                c[CH_THROTTLE] = clamp(c[CH_THROTTLE] + step)
         elif key == "s":
-            c[CH_THROTTLE] = clamp(c[CH_THROTTLE] - step)
+            if self.args.throttle_center and self.armed:
+                self._thr_touched = True
+                c[CH_THROTTLE] = clamp(MID - d)
+            else:
+                c[CH_THROTTLE] = clamp(c[CH_THROTTLE] - step)
         elif key == "a":
             c[CH_YAW] = clamp(MID - d)
         elif key == "d":
@@ -269,6 +292,8 @@ class CustomVirtualRC:
             self.toggle("msp_prev")
         elif key.isdigit() and key != "0":
             self.set_msp_state(int(key) - 1)
+        elif key == "t":
+            self.toggle("throttle_mode")
         elif key == "x":
             self.toggle("panic")
         elif key == "c":
@@ -278,7 +303,10 @@ class CustomVirtualRC:
         return True
 
     def decay(self):
-        for idx in (CH_ROLL, CH_PITCH, CH_YAW):
+        axes = [CH_ROLL, CH_PITCH, CH_YAW]
+        if self.args.throttle_center and self.armed and self._thr_touched:
+            axes.append(CH_THROTTLE)
+        for idx in axes:
             v = self.channels[idx]
             if v != MID:
                 self.channels[idx] = MID + int((v - MID) * 0.4)
@@ -328,7 +356,10 @@ class CustomVirtualRC:
             tv = apply_deadzone(js.axis(num), dz)
             if inv:
                 tv = -tv
-            if self.args.throttle_mode == "direct":
+            if self.args.throttle_center and self.armed and tv != 0:
+                self._thr_touched = True
+            if self.args.throttle_mode == "direct" or \
+                    (self.args.throttle_center and self.armed and self._thr_touched):
                 self.channels[CH_THROTTLE] = clamp(MID + tv * 500)
             else:
                 self.channels[CH_THROTTLE] = clamp(
@@ -349,6 +380,8 @@ class CustomVirtualRC:
                         return
                     if action == "msp":
                         self.toggle("msp_next")
+                    elif action == "throttle":
+                        self.toggle("throttle_mode")
                     elif action:
                         self.toggle(action)
                 self.joystick_axes(dt)
@@ -391,7 +424,8 @@ class CustomVirtualRC:
             "-" * 66,
             f"  Roll {c[0]:>4}   Pitch {c[1]:>4}   Throttle {c[2]:>4}   Yaw {c[3]:>4}",
             f"  ARM(AUX{a.arm_aux}): {onoff(self.armed)}   "
-            f"ANGLE(AUX{a.angle_aux}): {onoff(self.angle)}",
+            f"ANGLE(AUX{a.angle_aux}): {onoff(self.angle)}   "
+            f"THR: {'spring->mid' if self.args.throttle_center else 'latch'}",
             f"  OVERRIDE(AUX{a.msp_aux}): state {self.msp_state + 1}/"
             f"{len(self.msp_states)}  value {self.msp_value()}  range {lo}-{hi}",
         ]
@@ -402,9 +436,9 @@ class CustomVirtualRC:
                 f"[R {c[m]} P {c[m+1]} Y {c[m+2]} T {c[m+3]}]")
         lines.append("-" * 66)
         if self.js:
-            lines.append("  sticks fly · buttons: arm/angle/panic · msp button = next state")
+            lines.append("  sticks fly · buttons: arm/angle/panic · msp=next state · throttle=toggle mode")
         else:
-            lines.append("  thr w/s  yaw a/d  pitch i/k  roll j/l  arm=SPACE  g=angle")
+            lines.append("  thr w/s  yaw a/d  pitch i/k  roll j/l  arm=SPACE  g=angle  t=thr mode")
             lines.append("  m/n = next/prev override state   1-9 = pick state   x=panic  q=quit")
         out = []
         if self._status_lines:
@@ -448,13 +482,16 @@ def parse_args(argv):
                    help="AUX channel for the multi-state override switch")
     p.add_argument("--msp-states", default="1000-1200,1201-1450,1451-1550,1551-2000",
                    help="override switch ranges 'lo-hi,lo-hi,...' (cycled with m/n)")
-    p.add_argument("--mirror-aux", type=int, default=7,
+    p.add_argument("--mirror-aux", type=int, default=8,
                    help="first AUX of the roll/pitch/yaw/throttle mirror block "
-                        "(0 disables). Default AUX7 -> AUX7..AUX10")
+                        "(0 disables). Default AUX8 -> AUX8..AUX11")
     p.add_argument("--deflection", type=int, default=400,
                    help="max stick deflection from centre (us)")
     p.add_argument("--throttle-step", type=int, default=25,
                    help="keyboard throttle change per key press (us)")
+    p.add_argument("--throttle-latch", dest="throttle_center", action="store_false",
+                   help="latch throttle (hold its value) instead of the default "
+                        "spring-back-to-mid behaviour")
 
     g = p.add_argument_group("gamepad (Linux joystick API)")
     g.add_argument("--joystick", nargs="?", const="/dev/input/js0", default=None,
@@ -464,7 +501,8 @@ def parse_args(argv):
     g.add_argument("--axes", default="roll=3,pitch=4i,throttle=1i,yaw=0",
                    help="axis map name=number[i] (i inverts)")
     g.add_argument("--buttons", default="arm=0,panic=1,angle=2,msp=3,quit=6",
-                   help="button map name=number (names: arm angle msp panic quit)")
+                   help="button map name=number (names: arm angle msp panic quit "
+                        "throttle -- 'throttle' toggles spring/latch)")
     g.add_argument("--throttle-mode", choices=("incremental", "direct"),
                    default="incremental", help="gamepad throttle behaviour")
     g.add_argument("--throttle-rate", type=float, default=600.0,
