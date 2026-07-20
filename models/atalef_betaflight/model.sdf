@@ -1,0 +1,322 @@
+<?xml version='1.0'?>
+<sdf version="1.9">
+  <model name="atalef_betaflight">
+    <self_collide>false</self_collide>
+    <include>
+      <uri>model://iris_with_standoffs</uri>
+    </include>
+
+    <include>
+      <uri>model://gimbal_3d</uri>
+      <name>gimbal</name>
+      <pose degrees="true">0.1 -0.01 -0.05 90 0 90</pose>
+    </include>
+
+    <joint name="gimbal_joint" type="revolute">
+      <parent>iris_with_standoffs::base_link</parent>
+      <child>gimbal::base_link</child>
+      <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+    <include>
+      <name>down_camera</name>
+      <pose degrees="true">0 0 -0.04 0 0 0</pose>
+      <uri>model://fixed_camera</uri>
+    </include>
+
+    <joint name='down_cam_joint' type='fixed'>
+      <parent>iris_with_standoffs::base_link</parent>
+      <child>down_camera::camera_link</child>
+      <pose>0 0 0 0 0 0</pose>
+    </joint>
+
+    <include>
+      <name>front_camera</name>
+      <pose degrees="true" relative_to="gimbal::pitch_link">0 0 0.03 -180 0 90</pose>
+      <uri>model://fixed_camera</uri>
+    </include>
+
+    <joint name='front_cam_joint' type='fixed'>
+      <parent>gimbal::pitch_link</parent>
+      <child>front_camera::camera_link</child>
+      <pose>0 0 0 0 0 0</pose>
+    </joint>
+
+    <include>
+      <name>lidar</name>
+      <pose degrees="true">-0.06 0 -0.04 0 0 0</pose>
+      <uri>model://lidar_down</uri>
+    </include>
+
+    <joint name='lidar_joint' type='fixed'>
+      <parent>iris_with_standoffs::base_link</parent>
+      <child>lidar::lidar_link</child>
+      <pose> 0 0 0 0 0 0</pose>
+    </joint>
+
+    <!-- plugins -->
+    <plugin filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
+    </plugin>
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>0.084 0 0</cp>
+      <forward>0 1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_0</link_name>
+    </plugin>
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>-0.084 0 0</cp>
+      <forward>0 -1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_0</link_name>
+    </plugin>
+
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>0.084 0 0</cp>
+      <forward>0 1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_1</link_name>
+    </plugin>
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>-0.084 0 0</cp>
+      <forward>0 -1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_1</link_name>
+    </plugin>
+
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>0.084 0 0</cp>
+      <forward>0 -1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_2</link_name>
+    </plugin>
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>-0.084 0 0</cp>
+      <forward>0 1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_2</link_name>
+    </plugin>
+
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>0.084 0 0</cp>
+      <forward>0 -1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_3</link_name>
+    </plugin>
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.2500</cla>
+      <cda>0.10</cda>
+      <cma>0.0</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.002</area>
+      <air_density>1.2041</air_density>
+      <cp>-0.084 0 0</cp>
+      <forward>0 1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>iris_with_standoffs::rotor_3</link_name>
+    </plugin>
+
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
+      <joint_name>iris_with_standoffs::rotor_0_joint</joint_name>
+    </plugin>
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
+      <joint_name>iris_with_standoffs::rotor_1_joint</joint_name>
+    </plugin>
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
+      <joint_name>iris_with_standoffs::rotor_2_joint</joint_name>
+    </plugin>
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
+      <joint_name>iris_with_standoffs::rotor_3_joint</joint_name>
+    </plugin>
+
+    <!--
+      Betaflight SITL bridge.
+
+      Betaflight sends normalised (0..1) motor commands as motor_speed[0..3].
+      Its internal QUADX mixer is remapped so that motor_speed[i] corresponds
+      directly to iris rotor_i, matching the physical layout / spin direction:
+        motor_speed[0] -> rotor_0 (front-right, CCW)
+        motor_speed[1] -> rotor_1 (rear-left,  CCW)
+        motor_speed[2] -> rotor_2 (front-left, CW)
+        motor_speed[3] -> rotor_3 (rear-right, CW)
+      The sign of <multiplier> encodes the spin direction; 838 rad/s is full
+      throttle (same tuning as the ArduPilot iris).
+
+      If the drone spins/flips on yaw, reverse the affected motor directions in
+      the Betaflight configurator (Motors tab) rather than editing this file.
+    -->
+    <plugin name="BetaFlightPlugin" filename="BetaFlightPlugin">
+      <!-- Port settings -->
+      <fdm_addr>127.0.0.1</fdm_addr>
+      <fdm_port_in>9002</fdm_port_in>
+      <fdm_port_out>9003</fdm_port_out>
+
+      <!-- Frame conventions (as ArduPilot) -->
+      <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 0</modelXYZToAirplaneXForwardZDown>
+      <gazeboXYZToNED degrees="true">0 0 0 180 0 90</gazeboXYZToNED>
+
+      <!-- Sensors -->
+      <imuName>iris_with_standoffs::imu_link::imu_sensor</imuName>
+
+      <control channel="0">
+        <jointName>iris_with_standoffs::rotor_0_joint</jointName>
+        <multiplier>838</multiplier>
+        <offset>0</offset>
+        <p_gain>0.20</p_gain>
+        <i_gain>0</i_gain>
+        <d_gain>0</d_gain>
+        <cmd_max>2.5</cmd_max>
+        <cmd_min>-2.5</cmd_min>
+      </control>
+
+      <control channel="1">
+        <jointName>iris_with_standoffs::rotor_1_joint</jointName>
+        <multiplier>838</multiplier>
+        <offset>0</offset>
+        <p_gain>0.20</p_gain>
+        <i_gain>0</i_gain>
+        <d_gain>0</d_gain>
+        <cmd_max>2.5</cmd_max>
+        <cmd_min>-2.5</cmd_min>
+      </control>
+
+      <control channel="2">
+        <jointName>iris_with_standoffs::rotor_2_joint</jointName>
+        <multiplier>-838</multiplier>
+        <offset>0</offset>
+        <p_gain>0.20</p_gain>
+        <i_gain>0</i_gain>
+        <d_gain>0</d_gain>
+        <cmd_max>2.5</cmd_max>
+        <cmd_min>-2.5</cmd_min>
+      </control>
+
+      <control channel="3">
+        <jointName>iris_with_standoffs::rotor_3_joint</jointName>
+        <multiplier>-838</multiplier>
+        <offset>0</offset>
+        <p_gain>0.20</p_gain>
+        <i_gain>0</i_gain>
+        <d_gain>0</d_gain>
+        <cmd_max>2.5</cmd_max>
+        <cmd_min>-2.5</cmd_min>
+      </control>
+    </plugin>
+
+    <!-- Gimbal joint position controllers (drive via /gimbal/cmd_* topics) -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal::roll_joint</joint_name>
+      <topic>/gimbal/cmd_roll</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal::pitch_joint</joint_name>
+      <topic>/gimbal/cmd_pitch</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal::yaw_joint</joint_name>
+      <topic>/gimbal/cmd_yaw</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+
+  </model>
+</sdf>

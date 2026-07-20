@@ -89,6 +89,19 @@ target_link_libraries(ArduPilotPlugin PRIVATE
   gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
 )
 
+add_library(BetaFlightPlugin
+    SHARED
+    src/BetaFlightPlugin.cc
+    src/SocketUDP.cc
+    src/Util.cc
+)
+target_include_directories(BetaFlightPlugin PRIVATE
+  include
+)
+target_link_libraries(BetaFlightPlugin PRIVATE
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+)
+
 add_library(ParachutePlugin
   SHARED
   src/ParachutePlugin.cc
@@ -134,6 +147,7 @@ target_link_libraries(GstCameraPlugin PRIVATE
 install(
   TARGETS
   ArduPilotPlugin
+  BetaFlightPlugin
   ParachutePlugin
   CameraZoomPlugin
   GstCameraPlugin
