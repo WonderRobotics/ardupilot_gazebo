@@ -129,10 +129,10 @@ serial device — so we bridge it with socat in **new terminal**:
 ```bash
 socat PTY,link=$HOME/bf_vcom,raw,echo=0 TCP:127.0.0.1:5761   # baud is ignored over the PTY
 ```
-Then from another terminal, link it to e.g. `/dev/ttyUSB0` and set permissions:
+Then from another terminal, link it to e.g. `/dev/ttyUSB0` (and set permissions if needed):
 ```bash
 sudo ln -sf $HOME/bf_vcom /dev/ttyUSB0
-sudo chmod 666 /dev/ttyUSB0
+sudo chmod 666 /dev/ttyUSB0 # This line may not be needed
 ```
 Finally, we can connect in DS using this serial port.
 

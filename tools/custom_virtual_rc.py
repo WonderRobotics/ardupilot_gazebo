@@ -360,7 +360,7 @@ class CustomVirtualRC:
                 self._thr_touched = True
             if self.args.throttle_mode == "direct" or \
                     (self.args.throttle_center and self.armed and self._thr_touched):
-                self.channels[CH_THROTTLE] = clamp(MID + tv * 500)
+                self.channels[CH_THROTTLE] = clamp(MID + tv * self.args.throttle_scale)
             else:
                 self.channels[CH_THROTTLE] = clamp(
                     self.channels[CH_THROTTLE] + tv * self.args.throttle_rate * dt)
@@ -507,6 +507,10 @@ def parse_args(argv):
                    default="incremental", help="gamepad throttle behaviour")
     g.add_argument("--throttle-rate", type=float, default=600.0,
                    help="incremental throttle change at full stick (us/s)")
+    g.add_argument("--throttle-scale", type=int, default=500,
+                   help="max throttle deflection from mid in direct/spring mode "
+                        "(us); raise it (like --deflection) if your stick doesn't "
+                        "swing the full +/-32767 so throttle can't reach 1000/2000")
     g.add_argument("--deadzone", type=float, default=0.08,
                    help="gamepad stick centre deadzone (0..1)")
     return p.parse_args(argv)

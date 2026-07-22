@@ -120,6 +120,11 @@ extra Python packages required.
   throttle. Use `--throttle-mode direct` if you have a non-centring throttle
   axis. `--deadzone` sets the centre dead band.
 
+### Futaba controller setup that works good with DS
+```bash
+./tools/custom_virtual_rc.py --arm-aux 5 --angle-aux 6 --msp-aux 7 --joystick --axes roll=0,pitch=1i,throttle=2i,yaw=4 --throttle-rate 3000 --throttle-mode direct --deflection 800 --throttle-scale 900
+```
+
 ### Typical session
 1. Start Gazebo, then the SITL, then `virtual_rc.py` (keyboard or `--joystick`).
 2. Enable angle mode (`g` / the angle button) for easy self-levelled flight.
