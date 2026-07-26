@@ -1,0 +1,187 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="kfar_netter">
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
+    </plugin>
+    <plugin filename="gz-sim-air-pressure-system"
+      name="gz::sim::systems::AirPressure">
+    </plugin>
+    <plugin filename="gz-sim-air-speed-system"
+      name="gz::sim::systems::AirSpeed">
+    </plugin>
+    <plugin filename="gz-sim-apply-link-wrench-system"
+      name="gz::sim::systems::ApplyLinkWrench">
+    </plugin>
+    <plugin filename="gz-sim-magnetometer-system"
+      name="gz::sim::systems::Magnetometer">
+    </plugin>
+
+    <gravity>0 0 -9.8066</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>32.287132602888846</latitude_deg>
+      <longitude_deg>34.8760986328125</longitude_deg>
+      <elevation>29.600000000000364</elevation>
+    </spherical_coordinates>
+
+    <scene>
+      <grid>false</grid>
+      <origin_visual>false</origin_visual>
+      <shadows>false</shadows>
+    </scene>
+
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <max_contacts>100</max_contacts>
+      <dart>
+        <!-- Heightmaps behave better with the bullet collision detector -->
+        <collision_detector>bullet</collision_detector>
+      </dart>
+    </physics>
+
+    <light type="directional" name="sun">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+      <visualize>false</visualize>
+    </light>
+
+    <model name="terrain">
+      <self_collide>false</self_collide>
+      <static>true</static>
+      <pose>129.36 -128.75 -2.44 0 0 0</pose>
+
+      <link name="ground">
+        <collision name="collision">
+          <geometry>
+            <heightmap>
+              <uri>file://heightmaps/kfar_netter_height_map.tif</uri>
+              <size>776.2 772.45 14.4</size>
+              <pos>129.36 -128.75 -2.44</pos>
+            </heightmap>
+          </geometry>
+        </collision>
+        <visual name="ground_visual">
+          <geometry>
+            <heightmap>
+              <use_terrain_paging>false</use_terrain_paging>
+              <texture>
+                <diffuse>model://textures/kfar_netter_aerial.png</diffuse>
+                <normal>model://textures/kfar_netter_aerial.png</normal>
+                <size>776.2 772.45 14.4</size>
+              </texture>
+              <uri>file://heightmaps/kfar_netter_height_map.tif</uri>
+              <size>776.2 772.45 14.4</size>
+              <pos>129.36 -128.75 -2.44</pos>
+              <sampling>8</sampling>
+            </heightmap>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- props -->
+    <include>
+      <name>reactor1</name>
+      <uri>model://reactor</uri>
+      <pose>40 40 0.5 0 0 0</pose>
+      <static>true</static>
+    </include>
+
+    <include>
+      <name>reactor2</name>
+      <uri>model://reactor</uri>
+      <pose>65 40 0.5 0 0 0</pose>
+      <static>true</static>
+    </include>
+
+    <include>
+      <name>building1</name>
+      <uri>model://office_building</uri>
+      <pose>100 80 0.5 0 0 0</pose>
+      <static>true</static>
+    </include>
+
+    <include>
+      <name>building2</name>
+      <uri>model://office_building</uri>
+      <pose>100 100 0.5 0 0 0</pose>
+      <static>true</static>
+    </include>
+
+    <include>
+      <name>building3</name>
+      <uri>model://office_building</uri>
+      <pose>120 100 0.5 0 0 0</pose>
+      <static>true</static>
+    </include>
+
+    <include>
+      <name>building4</name>
+      <uri>model://office_building</uri>
+      <pose>120 80 0.5 0 0 0</pose>
+      <static>true</static>
+    </include>
+
+    <include>
+      <uri>model://car_121</uri>
+      <pose>0 80 0.5 0 0 0</pose>
+      <static>false</static>
+    </include>
+
+    <plugin name="path_mover_plugin" filename="libPathMoverPlugin.so">
+      <model>car_121</model>
+      <points>(3.00, 100.00), (3.00, -100.00)</points>
+      <speed>1</speed>
+      <angleOffset>90</angleOffset>
+    </plugin>
+
+    <!-- quad (Betaflight SITL) -->
+    <include>
+      <uri>model://atalef_betaflight</uri>
+      <name>atalef1</name>
+      <pose degrees="true">0 0 0.1 0 0 90</pose>
+      <experimental:params>
+        <plugin element_id="lidar::lidar_plugin" action="modify">
+          <port>14551</port>
+        </plugin>
+        <plugin element_id="BetaFlightPlugin" action="modify">
+          <fdm_addr>127.0.0.1</fdm_addr>
+          <fdm_port_in>9002</fdm_port_in>
+          <fdm_port_out>9003</fdm_port_out>
+        </plugin>
+      </experimental:params>
+    </include>
+
+  </world>
+</sdf>
