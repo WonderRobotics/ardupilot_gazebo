@@ -5,7 +5,7 @@
       <uri>model://zephyr</uri>
     </include>
 
-    <!-- 
+    <!--
       The attachment link connected by a ball joint is to allow the
       aircraft to rotate freely below parachute, as detachable joint
       must be fixed.
@@ -191,6 +191,7 @@
       <fdm_port_in>9002</fdm_port_in>
       <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
       <lock_step>1</lock_step>
+      <no_time_sync>1</no_time_sync>
 
       <!-- Frame conventions
         modelXYZToAirplaneXForwardZDown:
