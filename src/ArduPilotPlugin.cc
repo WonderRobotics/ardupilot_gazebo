@@ -244,6 +244,9 @@ class gz::sim::systems::ArduPilotPluginPrivate
   /// \brief Set true to enforce lock-step simulation
   public: bool isLockStep{false};
 
+  /// \brief Set true to prevent SITL from trying to sync with wall-time
+  public: bool isNoTimeSync{true};
+
   /// \brief Set true if have 32 servo channels
   public: bool have32Channels{false};
 
@@ -509,6 +512,10 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
   // Enforce lock-step simulation (has default: false)
   this->dataPtr->isLockStep =
     sdfClone->Get("lock_step", this->dataPtr->isLockStep).first;
+
+  // Prevent SITL attempting time-sync (has default: true)
+  this->dataPtr->isNoTimeSync =
+    sdfClone->Get("no_time_sync", this->dataPtr->isNoTimeSync).first;
 
   this->dataPtr->have32Channels =
     sdfClone->Get("have_32_channels", false).first;
@@ -1999,6 +2006,14 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
       writer.Double(windSpdBdyA);
       writer.EndObject();
     }
+
+    // Set no time sync
+    writer.Key("no_time_sync");
+    writer.Bool(this->dataPtr->isNoTimeSync);
+
+    // Set no lockstep
+    writer.Key("no_lockstep");
+    writer.Bool(!this->dataPtr->isLockStep);
 
     writer.EndObject();
 
